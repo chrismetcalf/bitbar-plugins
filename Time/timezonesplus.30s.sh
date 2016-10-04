@@ -11,7 +11,7 @@
 
 
 
-echo -n "New York " ; TZ=":US/Eastern" date +'%l:%M %p'
-echo -n "San Francisco " ; TZ=":US/Pacific" date +'%l:%M %p'
-echo -n "London " ; TZ=":Europe/London" date +'%l:%M %p'
-echo -n "Hong Kong " ; TZ="Asia/Hong_Kong" date +'%l:%M %p'
+echo -n "NY " ; TZ=":US/Eastern" date +'%l:%M %p'
+echo -n "SF " ; TZ=":US/Pacific" date +'%l:%M %p'
+echo -n "LN " ; TZ=":Europe/London" date +'%l:%M %p'
+echo -n "HK " ; TZ="Asia/Hong_Kong" date +'%l:%M %p'
