@@ -9,20 +9,27 @@
 # <bitbar.image>https://cloud.githubusercontent.com/assets/683200/16276583/ff267f36-387c-11e6-9fd0-fc57b459e967.png</bitbar.image>
 # <bitbar.dependencies>python</bitbar.dependencies>
 
+import os
 import json
 import urllib2
 import textwrap
+import subprocess
 from random import randint
 
-api_key = '' # get yours at https://darksky.net/dev
-units = '' # set to si for metric, leave blank for imperial
+api_key = '07706af6a175d8f3a2dac9b909c23ba2' # get yours at https://developer.forecast.io
+units = '' # change to si for metric, default is imperial
 
 def auto_loc_lookup():
   try:
-    location = urllib2.urlopen('https://ipinfo.io/json')
-    return json.load(location)
-  except urllib2.URLError:
-    return False
+    loc = subprocess.check_output([
+        '/usr/local/bin/CoreLocationCLI',
+        '-once', 'YES',
+        '-format', '%latitude,%longitude']).strip()
+    return loc
+  except:
+    # Read our location from a ~/.where file
+    with open(os.path.expanduser('~') + '/.where', 'r') as f:
+        return f.read().strip()
 
 def full_country_name(country):
   try:
@@ -34,7 +41,7 @@ def full_country_name(country):
         return False
     except KeyError:
       return False
-  except urllib2.URLError:
+  except urllib2.HTTPError:
     return False
 
 def calculate_bearing(degree):
@@ -77,12 +84,11 @@ def get_wx():
   if location is False:
     return False
 
-  for locData in location:
-    locData.encode('utf-8')
+  location.encode('utf-8')
 
   try:
-    if 'loc' in location:
-      wx = json.load(urllib2.urlopen('https://api.darksky.net/forecast/' + api_key + '/' + location['loc'] + '?units=' + units + "&v=" + str(randint(0,100))))
+    if location:
+      wx = json.load(urllib2.urlopen('https://api.forecast.io/forecast/' + api_key + '/' + location + '?units=' + units + "&v=" + str(randint(0,100))))
     else:
       return False
   except urllib2.HTTPError:
@@ -90,7 +96,7 @@ def get_wx():
 
   if units == 'si':
     unit = 'C'
-    distance = 'm/s'
+    distance = 'km/h'
     distance_short = 'km'
   else:
     unit = 'F'
@@ -158,7 +164,7 @@ def get_wx():
 def render_wx():
 
   if api_key == '':
-    print 'Missing API key'
+    print 'No API key'
     print '---'
     print 'Get an API Key | href=https://darksky.net/dev'
     return False
@@ -166,9 +172,7 @@ def render_wx():
   weather_data = get_wx()
 
   if weather_data is False:
-    print '--'
-    print '---'
-    print 'Could not get weather data at this time'
+    print 'Could not get weather'
     return False
 
   if 'icon' in weather_data and 'temperature' in weather_data:
