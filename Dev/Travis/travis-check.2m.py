@@ -30,13 +30,14 @@
 
 import json
 import urllib2
+import os
 
 # You need to set your TRAVIS_KEY to an API key for travis.
 # -- Please note that this IS NOT the 'Token' listed on the Travis CI website
 # -- Again, this is NOT the token on https://travis-ci.org/profile/your-name
 # The easiest way to get this key is to use the official travis client
 # (`gem install travis`), and run `travis_token`.
-TRAVIS_KEY = 'YOUR TRAVIS TOKEN (Run `travis token` to retreive it)'
+TRAVIS_KEY = os.environ['TRAVIS_KEY']
 
 # If you don't want to check all repos, then specify the ones you do wish to
 # check here, and this plugin will only get the details of these repos.
@@ -51,7 +52,7 @@ TRAVIS_KEY = 'YOUR TRAVIS TOKEN (Run `travis token` to retreive it)'
 # If you set INCLUDE_PULL_REQUESTS to `True`, then this script will get the
 # status of both pull requests and commits. By default, it only gets the status
 # of commits (pushes).
-INCLUDE_PULL_REQUESTS = False
+INCLUDE_PULL_REQUESTS = True
 
 # SUPER SECRET FEATURE!
 # Instead of listing the repos you want to check in an array above, you can
@@ -65,7 +66,7 @@ INCLUDE_PULL_REQUESTS = False
 # curl -X POST https://api.travis-ci.org/repo/ACCOUNT%2FREPO/star -H "Accept: application/vnd.travis-ci.3+json" -H "Authorization: token YOUR_TOKEN"
 # (Pay particular attention to the headers, and replace
 # ACCOUNT, REPO and YOUR_TOKEN as necessary)
-SECRET_FILTER_BY_STAR = False
+SECRET_FILTER_BY_STAR = True
 
 # For enterprise travis, change the .org/ to .com/
 TRAVIS_TLD = '.org/'
@@ -107,7 +108,7 @@ def request(uri):
         return json.load(response)
 
     except:
-        print("travis-check error")
+        print("💥")
         print("---")
         print("Maybe you need to edit the plugin and set your access token?")
         print(" (could also be an API/HTTP error)")

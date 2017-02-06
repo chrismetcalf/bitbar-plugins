@@ -15,7 +15,7 @@
 # 5 minute refresh is just under the 300 calls a day no-key api limit
 
 # id for user from url - e.g. https://stackoverflow.com/users/4114896/matzfan
-SO_ID=22656 # CHANGE THIS VALUE to your's (or watch Mr Skeet reach 7 figures!)
+SO_ID=1000222 # CHANGE THIS VALUE to your's (or watch Mr Skeet reach 7 figures!)
 
 URI="https://api.stackexchange.com/2.2/users/$SO_ID?site=stackoverflow" # api
 
@@ -35,7 +35,9 @@ elif [ "$NEWREP" -gt "$OLDREP" ] ; then
 elif [ "$OLDREP" -gt "$NEWREP" ] ; then
   echo 👎
 else
-  echo "$NEWREP" # output score
+  echo "👊" # output score
 fi
+echo "---"
+echo "Reputation: $NEWREP"
 
 echo "$NEWREP" > /tmp/reputationizer.dat # write new score to file
