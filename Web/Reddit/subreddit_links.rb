@@ -29,14 +29,14 @@ SUBREDDITS = [
 # something unique and not generic.
 USER_AGENT = "bitbar-user-agent"
 REDDIT = "https://www.reddit.com/"
-DEFAULT_PORT = 80
+DEFAULT_PORT = 443
 
 def to_json(subreddit, type)
   uri = URI.parse("#{REDDIT}#{subreddit}#{type}.json")
   @http = Net::HTTP::Get.new(uri)
   @http.add_field('User-Agent', USER_AGENT)
  
-  res = Net::HTTP.start(uri.host, DEFAULT_PORT) do |http| 
+  res = Net::HTTP.start(uri.host, DEFAULT_PORT, :use_ssl => true) do |http| 
     http.request(@http)
   end
  
@@ -51,7 +51,7 @@ def prettify(json)
     puts "NSFW | color=red"
   end
 
-  puts json["title"] + " | color=#337ab7 | href=#{REDDIT}" + json["permalink"]
+  puts json["title"] + "| href=#{REDDIT}" + json["permalink"] + " color=#337ab7"
   puts "Score: #{json["score"]}, Comments: #{json["num_comments"]}"
 end
 
