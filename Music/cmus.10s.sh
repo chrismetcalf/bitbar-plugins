@@ -44,18 +44,16 @@ if [ "$1" = 'launch-terminal' ]; then
   exit
 fi
 
-cmus-remote -C status > /dev/null 2>&1
+state=$(cmus-remote -C status | sed -n 1p | cut -d " " -f2)
 
-if [ $? -ne 0 ]; then
+if [ "$state" = "" ]; then
   echo "♫"
   echo "---"
   echo "cmus is not running"
-  echo "Launch cmus in iTerm | bash=$0 param1=launch-iterm terminal=false refresh=true"
-  echo "Launch cmus in Terminal | bash=$0 param1=launch-terminal terminal=false refresh=true"
+  echo "Launch cmus in iTerm | bash='$0' param1=launch-iterm terminal=false refresh=true"
+  echo "Launch cmus in Terminal | bash='$0' param1=launch-terminal terminal=false refresh=true"
   exit
 fi
-
-state=$(cmus-remote -C status | sed -n 1p | cut -d " " -f2)
 
 if [ "$1" = 'playpause' ]; then
   cmus-remote --pause
@@ -82,7 +80,7 @@ track=$(cmus-remote -C "format_print %{title}")
 artist=$(cmus-remote -C "format_print %{artist}")
 album=$(cmus-remote -C "format_print %{album}")
 
-echo "$state_icon $track - $artist | length=40"
+echo "$state_icon"
 echo "---"
 
 case "$0" in
@@ -101,9 +99,9 @@ echo "Album: $album | color=#333333 length=40"
 echo "---"
 
 if [ "$state" = "playing" ]; then
-  echo "Pause | bash=$0 param1=playpause terminal=false refresh=true"
-  echo "Previous | bash=$0 param1=previous terminal=false refresh=true"
-  echo "Next | bash=$0 param1=next terminal=false refresh=true"
+  echo "Pause | bash='$0' param1=playpause terminal=false refresh=true"
+  echo "Previous | bash='$0' param1=previous terminal=false refresh=true"
+  echo "Next | bash='$0' param1=next terminal=false refresh=true"
 else
-  echo "Play | bash=$0 param1=playpause terminal=false refresh=true"
+  echo "Play | bash='$0' param1=playpause terminal=false refresh=true"
 fi
