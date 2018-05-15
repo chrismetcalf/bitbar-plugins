@@ -64,7 +64,11 @@ if [ ${#artist} -gt $trunc_length ];then
 fi
 album=$(tellspotify 'album of current track as string');
 
-echo "$state_icon $truncated_track - $truncated_artist"
+if [ "$state" = "playing" ]; then
+  echo "$state_icon $truncated_track - $truncated_artist"
+else
+  echo "$state_icon"
+fi
 echo "---"
 
 echo "Track: $track | color=#333333"
