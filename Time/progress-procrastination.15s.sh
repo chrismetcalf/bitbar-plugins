@@ -19,8 +19,8 @@
 # don't forget to chmod +x
 
 ## time parameters
-working_start=0900
-working_end=2300
+working_start=0800
+working_end=1700
 
 ## bitbar parameters
 # width and characters for the progress bars
@@ -45,18 +45,18 @@ bitbar="size=10 font='Menlo'"
 # then we use `date -jr $start -v +1y/+1m/+1d +%s` to get the ending timestamp
 # then we calculate the percentage with (now - start) / (end - start)
 
-now=$(date +%s)
+now=$(/bin/date +%s)
 
-Y=$(date +%Y)
-Y_start=$(date -j 01010000 +%s)
-Y_end=$(date -jr "$Y_start" -v +1y +%s)
+Y=$(/bin/date +%Y)
+Y_start=$(/bin/date -j 01010000 +%s)
+Y_end=$(/bin/date -jr "$Y_start" -v +1y +%s)
 Y_progress=$(
     echo "($now - $Y_start) * 100 / ($Y_end - $Y_start)" | bc -l
 )
 
-m=$(date +%m)
-m_start=$(date -j "$(date +%m)"010000 +%s)
-m_end=$(date -jr "$m_start" -v +1m +%s)
+m=$(/bin/date +%m)
+m_start=$(/bin/date -j "$(/bin/date +%m)"010000 +%s)
+m_end=$(/bin/date -jr "$m_start" -v +1m +%s)
 m_progress=$(
     echo "($now - $m_start) * 100 / ($m_end - $m_start)" | bc -l
 )
@@ -64,16 +64,16 @@ m_progress=$(
 # If time right now is working_start is less than the starting time but
 # midnight, set to "SLP" without %
 
-d=$(date +%d)
-d_start=$(date -j $working_start +%s) # starttime of today
+d=$(/bin/date +%d)
+d_start=$(/bin/date -j $working_start +%s) # starttime of today
 
 # set the end time
-d_today=$(date -j "$(date +%m%d)"0000 +%s)
+d_today=$(/bin/date -j "$(/bin/date +%m%d)"0000 +%s)
 if [ $working_end -eq 0000 ]
 then
-    d_end=$(date -jr "$d_today" -v +1d +%s) # beginning of next day
+    d_end=$(/bin/date -jr "$d_today" -v +1d +%s) # beginning of next day
 else
-    d_end=$(date -j "$(date +%m%d)$working_end" +%s) # set to working_end time of today
+    d_end=$(/bin/date -j "$(/bin/date +%m%d)$working_end" +%s) # set to working_end time of today
 fi
 
 d_progress=$(
@@ -104,12 +104,12 @@ if [ "$now" -lt "$d_end" ] # tell me to stop if I'm past $working_end
 then
     if [ "$now" -lt "$d_start" ] # basically captures post-midnight oil-burning
     then
-        echo "😴SLEEP!🛌 | $bitbar size=12 font=SF Compact Text Regular"
+        echo "😴 SLEEP! 🛌 | $bitbar size=12 font=SF Compact Text Regular"
     else
-        echo "P: $(round "$d_progress")% | $bitbar size=12 font=SF Compact Text Regular"
+        echo ":hourglass: $(round "$d_progress")% | $bitbar size=12 font=SF Compact Text Regular"
     fi
 else
-    echo "🛑STOP!✋ | $bitbar size=12 font=SF Compact Text Regular"
+    echo "🛑 STOP! ✋ | $bitbar size=12 font=SF Compact Text Regular"
 fi
 echo ---
 # day + progress bar
