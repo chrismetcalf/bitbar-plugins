@@ -9,44 +9,27 @@
 # <bitbar.abouturl>https://github.com/chrismetcalf/bitbar-plugins</bitbar.abouturl>
 
 require 'open-uri'
-require 'nokogiri'
+require 'json'
 
-page = Nokogiri::HTML(open("http://projects.fivethirtyeight.com/2016-election-forecast/"))
-feed = Nokogiri::XML(open("https://fivethirtyeight.com/tag/2016-election/feed/"))
+electoral_votes = JSON::parse(open('https://projects.fivethirtyeight.com/2020-election-forecast/electoral_votes.json').read)
+simulations = JSON::parse(open('https://projects.fivethirtyeight.com/2020-election-forecast/us_simulations.json').read)
 
-d_pct = page.css('.candidates.heads .candidate.dem .candidate-text .candidate-val.winprob')
-          .first.text.gsub(/[^0-9.]/, '').to_f
-r_pct = page.css('.candidates.heads .candidate.rep .candidate-text .candidate-val.winprob')
-          .first.text.gsub(/[^0-9.]/, '').to_f
+biden_wins = simulations.first["simulations"].select{ |s| s["winner"] == "Biden" }.count
 
-if d_pct > r_pct
-  puts ":princess: #{d_pct}%"
+if biden_wins > 50
+  puts ":thumbsup: #{biden_wins}%"
 else
-  puts ":imp: #{r_pct}%"
+  puts ":imp: #{biden_wins}%"
 end
-puts "---"
-puts "Chance of Winning:"
-puts ":princess: Hillary Clinton: #{d_pct}%"
-puts ":imp: Donald Trump: #{r_pct}%"
 
 puts "---"
 puts "Electoral Votes:"
-page.css(".card-natl-tables .table.one .cand").each do |row|
-  puts "#{row.css(".name.desktop").text}: #{row.css('.candidate-val').text}"
+electoral_votes.first["candidates"].each do |c|
+  puts "#{c["candidate"]}: #{c["mean"].round} (#{c["hi"]}/#{c["lo"]})"
 end
 
 puts "---"
-puts "Popular Vote:"
-page.css(".card-natl-tables .table.two .cand").each do |row|
-  puts "#{row.css(".name.desktop").text}: #{row.css('.candidate-val').text}"
-end
+puts "FiveThirtyEight | href=https://projects.fivethirtyeight.com/2020-election-forecast/"
 
 puts "---"
-puts ":wolf: FiveThirtyEight Election Forecast | href=http://projects.fivethirtyeight.com/2016-election-forecast/"
-feed.css("item")[0..2].each do |item|
-  date = Date::parse(item.css('pubDate').text)
-  puts "#{date.strftime("%Y-%m-%d")}: #{item.css('title').text} | href=#{item.css('link').text}"
-end
-
-puts "---"
-puts "Refresh... | refresh=true"
+puts "Refresh... | refresh"
